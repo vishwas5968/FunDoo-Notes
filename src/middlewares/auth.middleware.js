@@ -13,7 +13,7 @@ export const userAuth = async (req, res, next) => {
   try {
     let bearerToken = req.header('Authorization');
     if (!bearerToken)
-      throw {
+      throw{
         code: HttpStatus.BAD_REQUEST,
         message: 'Authorization token is required'
       };
