@@ -15,7 +15,7 @@ const userSchema = new Schema(
     password: {
       type: String
     }
-  },
+  }, 
 );
 
 export default model('User', userSchema);
