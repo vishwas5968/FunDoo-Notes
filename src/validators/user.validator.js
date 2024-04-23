@@ -19,8 +19,6 @@ export const newUserValidator = (req, res, next) => {
 
 export const loginValidator = (req,res,next)=>{
   const schema = Joi.object({
-    firstName: Joi.string().min(2),
-    lastName: Joi.string().min(2),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$')).message("")
   })
