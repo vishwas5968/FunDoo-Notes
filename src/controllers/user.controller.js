@@ -2,6 +2,7 @@ import HttpStatus from 'http-status-codes';
 import * as UserService from '../services/user.service';
 const bcrypt=require("bcryptjs")
 import {jsonResponse} from "../utils/JsonResponse..js";
+import {generateJwt} from "../utils/user.util.js";
 
 export const registerUser = async (req, res, next) => {
   // console.log(req.body)
@@ -28,29 +29,29 @@ export const registerUser = async (req, res, next) => {
       next(error)
     }
 };
-export const login=async(req,res,next)=>{
-  const data=await UserService.getUserByEmail(req.body.email)
-  console.log(data)
-  if (data.length){
-    const isMatch=await bcrypt.compare(req.body.password, data[0].password)
-    // const isMatch=await bcrypt.compareSync(req.body.password, data[0].password)
-      if (isMatch){
-        res.status(HttpStatus.OK).json({
-          code:HttpStatus.OK,
-          message:"Congratulations! Login Successful"
-        })
-      }
-      else{
-        res.status(HttpStatus.BAD_REQUEST).json({
-          code:HttpStatus.BAD_REQUEST,
-          message:`Error! Wrong Password`,
-        })
-      }
-  }
-  else {
+
+export const login=async(req,res,next)=> {
+  try {
+    const data = await UserService.login(req, res, next)
+    if (data.isMatch) {
+      const token= generateJwt(data._id,req.body.email)
+      res.cookie("at",token)
+      res.status(HttpStatus.OK).json({
+        code: HttpStatus.OK,
+        message: "Congratulations! Login Successful"
+      })
+    }
+    else {
+      res.status(HttpStatus.BAD_REQUEST).json({
+        code: HttpStatus.BAD_REQUEST,
+        message: `Error! Wrong Password`,
+      })
+    }
+  }catch (e) {
+    console.log(e)
     res.status(HttpStatus.BAD_REQUEST).json({
-      code:HttpStatus.BAD_REQUEST,
-      message:"Email-id not registered, Please register"
+      code: HttpStatus.BAD_REQUEST,
+      message: `Error! Register with email first`,
     })
   }
 }
