@@ -1,6 +1,10 @@
 import {model,Schema} from "mongoose";
 
 const notesSchema=new Schema({
+    title:{
+        type:String,
+
+    },
     description:{
         type:String
     },
