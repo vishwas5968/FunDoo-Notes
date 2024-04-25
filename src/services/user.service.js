@@ -5,8 +5,8 @@ export const registerUser = async (body) => {
   return await User.create(body);
 };
 
-export const getUserByEmail = async (body) => {
-  return User.find({email:body})
+export const getUserByEmail = (email) => {
+  return User.find({email:email})
 }
 
 
