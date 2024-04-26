@@ -57,7 +57,7 @@ export const deleteNote = async(req, res) => {
         await NotesService.deleteNote(req.params._id, res.locals.user.email);
         res.status(HttpStatus.OK).json({
             success: true,
-            message: 'Note Deleated Successfully',
+            message: 'Note Deleted Successfully',
         });
     }catch(error){
         res.status(HttpStatus.BAD_REQUEST).json({
@@ -66,3 +66,21 @@ export const deleteNote = async(req, res) => {
         });
     }
 };
+
+export const softDeleteNote= async (req, res)=> {
+    const data = await NotesService.softDeleteNote(req.params.id)
+    res.status(HttpStatus.CREATED).json({
+        success: true,
+        message: 'Note Deleted successfully',
+        data: data
+    });
+}
+
+export const archiveNote= async (req, res)=> {
+    const data = await NotesService.archiveNote(req.params.id)
+    res.status(HttpStatus.CREATED).json({
+        success: true,
+        message: 'Note Deleted successfully',
+        data: data
+    });
+}

@@ -9,13 +9,16 @@ const notesSchema=new Schema({
         type:String
     },
     color:{
-        type:String
+        type:String,
+        default:"White"
     },
     isArchive:{
-        type:String
+        type:Boolean,
+        default:false
     },
     isTrashed:{
-        type:String
+        type:Boolean,
+        default:false
     },
     createdBy:{
         type:String
