@@ -36,3 +36,14 @@ export const deleteNote = async(_id, email) => {
     })
 }
 
+export async function softDeleteNote(id) {
+    const oldData=await Notes.findById(id);
+    oldData.isTrashed=true
+    return Notes.findByIdAndUpdate(id, oldData, {new: true});
+}
+
+export async function archiveNote(id) {
+    const oldData=await Notes.findById(id);
+    oldData.isArchive=true
+    return Notes.findByIdAndUpdate(id, oldData, {new: true});
+}
