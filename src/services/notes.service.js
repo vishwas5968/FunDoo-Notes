@@ -4,8 +4,9 @@ export const createNotes = async(body) => {
     return await Notes.create(body);
 }
 
-export const getNoteByEmail = async(email) => {
-    return Notes.find({createdBy: email})
+export const getNoteByEmail = async (email) => {
+    const data = await Notes.find({ createdBy: email })
+    return data
 }
 
 export const updateNote = async(_id, body, email) => {
@@ -38,12 +39,12 @@ export const deleteNote = async(_id, email) => {
 
 export async function softDeleteNote(id) {
     const oldData=await Notes.findById(id);
-    oldData.isTrashed=true
+    oldData.isTrashed=!oldData.isTrashed
     return Notes.findByIdAndUpdate(id, oldData, {new: true});
 }
 
 export async function archiveNote(id) {
     const oldData=await Notes.findById(id);
-    oldData.isArchive=true
+    oldData.isArchive=!oldData.isArchive
     return Notes.findByIdAndUpdate(id, oldData, {new: true});
 }
