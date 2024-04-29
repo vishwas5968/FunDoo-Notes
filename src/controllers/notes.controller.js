@@ -5,7 +5,6 @@ export const createNotes = async(req, res) => {
     try {
         console.log(res.locals.user.email)
         req.body.createdBy = res.locals.user.email
-        console.log("*********--------------------")
         const data = await NotesService.createNotes(req.body);
         res.status(HttpStatus.CREATED).json({
             success: true,
@@ -68,19 +67,33 @@ export const deleteNote = async(req, res) => {
 };
 
 export const softDeleteNote= async (req, res)=> {
-    const data = await NotesService.softDeleteNote(req.params.id)
-    res.status(HttpStatus.CREATED).json({
-        success: true,
-        message: 'Note Deleted successfully',
-        data: data
-    });
+    try {
+        const data = await NotesService.softDeleteNote(req.params.id)
+        res.status(HttpStatus.CREATED).json({
+            success: true,
+            message: 'Note Deleted successfully',
+            data: data
+        });
+    } catch (error) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+            success: false,
+            message: `${error}`
+        });
+    }
 }
 
 export const archiveNote= async (req, res)=> {
-    const data = await NotesService.archiveNote(req.params.id)
-    res.status(HttpStatus.CREATED).json({
-        success: true,
-        message: 'Note Deleted successfully',
-        data: data
-    });
+    try {
+        const data = await NotesService.archiveNote(req.params._id)
+        res.status(HttpStatus.OK).json({
+            success: true,
+            message: 'Note Archived successfully',
+            data: data
+        });
+    } catch (error) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+            success: false,
+            message: `${error}`
+        });
+    }
 }

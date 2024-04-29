@@ -11,10 +11,10 @@ router.get("/",userAuth,NotesController.getNoteByEmail)
 
 router.delete("/:id",userAuth,NotesController.deleteNote)
 
+router.put('/:id',userAuth,NotesController.updateNote)
+
 router.put('/trash/:id',userAuth,NotesController.softDeleteNote)
 
 router.put('/archive/:id',userAuth,NotesController.archiveNote)
-
-router.put('/:id',userAuth,NotesController.updateNote)
 
 export default router
