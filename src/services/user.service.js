@@ -1,6 +1,6 @@
 import User from '../models/user.model';
-import bcrypt from "bcryptjs";
-import HttpStatus from "http-status-codes";
+import bcrypt from 'bcryptjs';
+import { sendEmail } from '../utils/user.util';
 
 //create new user
 export const registerUser = async (body) => {
@@ -26,3 +26,18 @@ export const login=async(req,res,next)=>{
   }
 }
 
+export const forgotPassword = async (email) => {
+  const data = await User.find({email:email})
+  if (data.length) {
+    await sendEmail(email)
+  }
+}
+
+export const resetPassword = async (email, password) =>{
+  const data =await User.findOne({email:email})
+  if (data !== null) {
+    data.password=await bcrypt.hash(password,5)
+    return User.findOneAndUpdate({ email: email }, data, { new: true })
+  }
+  throw new Error("Unauthorized Request")
+}

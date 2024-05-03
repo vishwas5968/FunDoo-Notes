@@ -1,14 +1,13 @@
 import HttpStatus from 'http-status-codes';
 import * as UserService from '../services/user.service';
 const bcrypt=require("bcryptjs")
-import {jsonResponse} from "../utils/JsonResponse..js";
+import {jsonResponse} from "../utils/swagger.json";
 import {generateJwt} from "../utils/user.util.js";
+import logger from '../config/logger.js';
 
 export const registerUser = async (req, res, next) => {
-  // console.log(req.body)
   const data=await UserService.getUserByEmail(req.body.email)
   req.body.password=await bcrypt.hash(req.body.password,5)
-  // req.body.password=bcrypt.hashSync(req.body.password,5)
     try {
       if (data.length===0) {
         const data = await UserService.registerUser(req.body);
@@ -30,7 +29,7 @@ export const registerUser = async (req, res, next) => {
     }
 };
 
-export const login=async(req,res,next)=> {
+export const login = async (req, res, next) => {
   try {
     const data = await UserService.login(req, res, next)
     if (data.isMatch) {
@@ -52,6 +51,45 @@ export const login=async(req,res,next)=> {
     res.status(HttpStatus.BAD_REQUEST).json({
       code: HttpStatus.BAD_REQUEST,
       message: `Error! Register with email first`,
+    })
+  }
+}
+
+export const forgotPassword = async(req, res) => {
+  try {
+    const data =await UserService.forgotPassword(req.body.email)
+    logger.info(data)
+      const token = generateJwt(null, req.body.email)
+      res.cookie("at", token)
+      res.status(201).json({
+        success: true,
+        message: `Click on the below link to reset password ${data}`,
+        data: "http://localhost:3000/api/v1/users/reset-password"
+      })
+  } catch (error) {
+      res.status(400).json({
+        success:false,
+        message:"Bad request",
+        data:`${error}`
+      })
+  }
+}
+
+export const resetPassword=async (req,res) =>{
+  try {
+    const data =await UserService.resetPassword(res.locals.user.email,req.body.password)
+    if (data !== null){
+      res.status(201).json({
+        success: true,
+        message: "Password updated successfully",
+        data:`${data}`
+      })
+    }
+  }catch (error){
+    res.status(400).json({
+      success:false,
+      message:"Bad request",
+      data:`${error}`
     })
   }
 }
