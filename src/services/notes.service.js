@@ -1,12 +1,11 @@
-import Notes from "../models/notes.model.js"
+import Notes from '../models/notes.model.js';
 
 export const createNotes = async(body) => {
     return await Notes.create(body);
 }
 
-export const getNoteByEmail = async (email) => {
-    const data = await Notes.find({ createdBy: email })
-    return data
+export const getNotesById = async (id) => {
+    return Notes.find({ createdBy: id })
 }
 
 export const updateNote = async(_id, body, email) => {

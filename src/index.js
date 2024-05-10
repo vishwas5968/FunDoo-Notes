@@ -15,6 +15,7 @@ import {
 import logger, { logStream } from './config/logger';
 
 import morgan from 'morgan';
+import { getDataFromCache } from './utils/user.util.js';
 
 const app = express();
 const host = process.env.APP_HOST;

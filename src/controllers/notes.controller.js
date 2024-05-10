@@ -3,9 +3,8 @@ import * as NotesService from "../services/notes.service.js"
 
 export const createNotes = async(req, res) => {
     try {
-        console.log(res.locals.user.email)
-        req.body.createdBy = res.locals.user.email
-        const data = await NotesService.createNotes(req.body);
+        req.body.createdBy = res.locals.user.id
+        const data = await NotesService.createNotes(req.body.createdBy);
         res.status(HttpStatus.CREATED).json({
             success: true,
             message: 'Note created successfully',
@@ -19,9 +18,9 @@ export const createNotes = async(req, res) => {
     }
 };
 
-export const getNoteByEmail = async(req, res) => {
+export const getNotesById = async(req, res) => {
     try{
-        const data = await NotesService.getNoteByEmail(res.locals.user.email)
+        let data = await NotesService.getNotesById(res.locals.user.id);
         res.status(HttpStatus.OK).json({
             success: true,
             message: 'fetched successfully',
@@ -43,6 +42,7 @@ export const updateNote = async(req, res) => {
             message: 'Note Updated Successfully',
             data: data
         });
+        // enableCache(req)
     }catch(error){
         res.status(HttpStatus.BAD_REQUEST).json({
             success: false,

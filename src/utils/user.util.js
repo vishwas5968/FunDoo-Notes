@@ -3,7 +3,9 @@ import dotenv from 'dotenv'
 import nodemailer from 'nodemailer'
 import { google } from 'googleapis'
 import logger from '../config/logger.js';
+import HttpStatus from 'http-status-codes';
 dotenv.config();
+const Redis=require('ioredis')
 
 export function generateJwt(id,email) {
     const payload={
@@ -44,4 +46,45 @@ export async function sendEmail(email) {
         if(err)
             throw new Error(err)
     })
+}
+
+export const enableCache = (email,userNotes)=>{
+    const redis=new Redis()
+    try {
+        redis.set(email,userNotes)
+        return redis.get(email, (err, result) => {
+            if (err) {
+                return null
+            } else {
+                console.log(result); // Prints "value"
+            }
+        });
+    }
+    catch (e) {
+        logger.error(e)
+    }
+}
+
+export const getDataFromCache=(req,res)=>{
+    const redis=new Redis()
+    try {
+        let token=req.header('Authorization')
+        token=token.split(" ")[1]
+        const userInfo=jwt.verify(token,process.env['SECRET '])
+        const data=redis.get(userInfo.email, (err, result) => {
+            if (err) {
+                return null
+            } else {
+                console.log(result); // Prints "value"
+            }
+        });
+        res.status(HttpStatus.OK).json({
+            success: true,
+            message: 'fetched successfully',
+            data: data
+        });
+    }
+    catch (e) {
+        logger.error(e)
+    }
 }

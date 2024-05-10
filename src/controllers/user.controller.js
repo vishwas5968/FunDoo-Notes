@@ -1,8 +1,7 @@
 import HttpStatus from 'http-status-codes';
 import * as UserService from '../services/user.service';
 const bcrypt=require("bcryptjs")
-import {jsonResponse} from "../utils/swagger.json";
-import {generateJwt} from "../utils/user.util.js";
+import { generateJwt } from '../utils/user.util.js';
 import logger from '../config/logger.js';
 
 export const registerUser = async (req, res, next) => {
@@ -11,12 +10,11 @@ export const registerUser = async (req, res, next) => {
     try {
       if (data.length===0) {
         const data = await UserService.registerUser(req.body);
-        const {firstName, lastName, email} = data
-        res.status(HttpStatus.CREATED).json(jsonResponse(HttpStatus.CREATED,{
-          firstName: firstName,
-          lastName: lastName,
-          email: email
-        },'User created successfully'))
+        res.status(HttpStatus.CREATED).json({
+          success:true,
+          message:"User created successfully",
+          data:data
+        })
       }
       else {
         res.status(HttpStatus.BAD_REQUEST).json({
@@ -33,12 +31,17 @@ export const login = async (req, res, next) => {
   try {
     const data = await UserService.login(req, res, next)
     if (data.isMatch) {
-      const token= generateJwt(data._id,req.body.email)
+      const token= generateJwt(data.data._id,req.body.email)
       res.cookie("at",token)
       res.status(HttpStatus.OK).json({
         code: HttpStatus.OK,
-        message: "Congratulations! Login Successful"
+        message: "Congratulations! Login Successful",
+        data:{
+          data,
+          token:token
+        }
       })
+      // enableCache(req,res)
     }
     else {
       res.status(HttpStatus.BAD_REQUEST).json({
@@ -58,10 +61,9 @@ export const login = async (req, res, next) => {
 export const forgotPassword = async(req, res) => {
   try {
     const data =await UserService.forgotPassword(req.body.email)
-    logger.info(data)
       const token = generateJwt(null, req.body.email)
       res.cookie("at", token)
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         message: `Click on the below link to reset password ${data}`,
         data: "http://localhost:3000/api/v1/users/reset-password"
@@ -79,7 +81,7 @@ export const resetPassword=async (req,res) =>{
   try {
     const data =await UserService.resetPassword(res.locals.user.email,req.body.password)
     if (data !== null){
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         message: "Password updated successfully",
         data:`${data}`

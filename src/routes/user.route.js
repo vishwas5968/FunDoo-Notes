@@ -12,6 +12,6 @@ router.post('/login', loginValidator, userController.login)
 
 router.post('/forgot-password', userController.forgotPassword)
 
-router.post('/reset-password',userAuth, userController.resetPassword)
+router.put('/reset-password',userAuth, userController.resetPassword)
 
 export default router

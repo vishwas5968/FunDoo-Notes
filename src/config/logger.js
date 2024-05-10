@@ -44,11 +44,7 @@ const morganLogger = winston.createLogger({
       level: 'debug',
       handleExceptions: true
     }),
-    new winston.transports.Console({
-      level: 'debug',
-      json: false,
-      handleExceptions: true
-    }),
+    new winston.transports.Console(),
     new winston.transports.DailyRotateFile({
       maxFiles: '14d',
       level: 'info',

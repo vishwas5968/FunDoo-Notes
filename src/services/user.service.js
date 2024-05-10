@@ -12,11 +12,12 @@ export const getUserByEmail = (email) => {
 }
 
 export const login=async(req,res,next)=>{
-  const data=await User.find({email:req.body.email})
-  if (data.length === 1){
-    const match=await bcrypt.compare(req.body.password, data[0].password)
+  const data=await User.findOne({email:req.body.email})
+  if (data){
+    const match=await bcrypt.compare(req.body.password, data.password)
+    // enableCache()
     return {
-      ...data[0],
+      data,
       isMatch:match
     }
     // const isMatch=await bcrypt.compareSync(req.body.password, data[0].password)
