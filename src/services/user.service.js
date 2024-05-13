@@ -8,37 +8,36 @@ export const registerUser = async (body) => {
 };
 
 export const getUserByEmail = (email) => {
-  return User.find({email:email})
-}
+  return User.find({ email: email });
+};
 
-export const login=async(req,res,next)=>{
-  const data=await User.findOne({email:req.body.email})
-  if (data){
-    const match=await bcrypt.compare(req.body.password, data.password)
+export const login = async (req, next) => {
+  const data = await User.findOne({ email: req.body.email });
+  if (data) {
+    const match = await bcrypt.compare(req.body.password, data.password);
     // enableCache()
     return {
       data,
-      isMatch:match
-    }
+      isMatch: match
+    };
     // const isMatch=await bcrypt.compareSync(req.body.password, data[0].password)
+  } else {
+    throw new Error();
   }
-  else {
-    throw new Error()
-  }
-}
+};
 
 export const forgotPassword = async (email) => {
-  const data = await User.find({email:email})
+  const data = await User.find({ email: email });
   if (data.length) {
-    await sendEmail(email)
+    await sendEmail(email);
   }
-}
+};
 
-export const resetPassword = async (email, password) =>{
-  const data =await User.findOne({email:email})
+export const resetPassword = async (email, password) => {
+  const data = await User.findOne({ email: email });
   if (data !== null) {
-    data.password=await bcrypt.hash(password,5)
-    return User.findOneAndUpdate({ email: email }, data, { new: true })
+    data.password = await bcrypt.hash(password, 5);
+    return User.findOneAndUpdate({ email: email }, data, { new: true });
   }
-  throw new Error("Unauthorized Request")
-}
+  throw new Error("Unauthorized Request");
+};
