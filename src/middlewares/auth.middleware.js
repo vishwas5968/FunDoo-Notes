@@ -7,7 +7,6 @@ dotenv.config();
 export const userAuth = async (req, res, next) => {
   try {
     let bearerToken = req.header('Authorization');
-    console.log(bearerToken, "-------------------------------");
     if (!bearerToken)
       throw {
         code: HttpStatus.BAD_REQUEST,
@@ -15,7 +14,6 @@ export const userAuth = async (req, res, next) => {
       };
     bearerToken = bearerToken.split(' ')[1];
     res.locals.user = await jwt.verify(bearerToken, process.env.SECRET);
-    console.log(res.locals.user, "*******************************");
     res.locals.token = bearerToken;
     next();
   } catch (error) {

@@ -1,24 +1,24 @@
-const swaggerAutogen = require('swagger-autogen')();
+const swaggerAutogen = require("swagger-autogen")();
 
 const doc = {
   info: {
-    version: "1.0",
-    title: "Google Keep Clone",
-    description: "Create Notes"
+    version: '1.0',
+    title: 'Google Keep Clone',
+    description: 'Create Notes'
   },
-  host: "localhost:3000",
-  basePath: "/api/v1",
-  schemes: ["http"],
-  consumes: ["application/json"],
-  produces: ["application/json"],
+  host: 'localhost:3000',
+  basePath: '/api/v1',
+  schemes: ['http'],
+  consumes: ['application/json'],
+  produces: ['application/json'],
   tags: [
     {
-      name: "Users",
-      description: ""
+      name: 'Users',
+      description: ''
     },
     {
-      name: "Notes",
-      description: ""
+      name: 'Notes',
+      description: ''
     }
   ],
   securityDefinitions: {},

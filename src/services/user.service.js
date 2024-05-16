@@ -1,6 +1,8 @@
-import User from '../models/user.model';
+import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '../utils/user.util';
+import { getNotesById } from './notes.service.js';
+import  { setAllNotes } from '../utils/redis.js';
 
 //create new user
 export const registerUser = async (body) => {
@@ -11,16 +13,16 @@ export const getUserByEmail = (email) => {
   return User.find({ email: email });
 };
 
-export const login = async (req, next) => {
+export const login = async (req) => {
   const data = await User.findOne({ email: req.body.email });
+  console.log(data);
+  await setAllNotes(data._id, await getNotesById(data._id))
   if (data) {
     const match = await bcrypt.compare(req.body.password, data.password);
-    // enableCache()
     return {
       data,
       isMatch: match
     };
-    // const isMatch=await bcrypt.compareSync(req.body.password, data[0].password)
   } else {
     throw new Error();
   }

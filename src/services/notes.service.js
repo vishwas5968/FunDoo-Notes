@@ -1,18 +1,24 @@
 import Notes from '../models/notes.model.js';
+import  * as Redis  from '../utils/redis.js';
 
 export const createNotes = async (body) => {
-  return await Notes.create(body);
+  const data = await Notes.create(body)
+  await Redis.setSingleNote(data.createdBy,data._id,data)
+  return data
 };
 
 export const getNotesById = async (id) => {
+  const notes =await Redis.getAllNotesForUser(id)
+  console.log(notes);
+  if (notes)
+    return notes
   return Notes.find({ createdBy: id });
 };
 
 export const updateNote = async (_id, body, email) => {
-  return await Notes.findOneAndUpdate(
+  const updatedData = await Notes.findOneAndUpdate(
     {
-      _id,
-      createdBy: email
+      _id
     },
     body,
     {
@@ -22,6 +28,8 @@ export const updateNote = async (_id, body, email) => {
     if (updatedNote !== null) return updatedNote;
     throw new Error("Unauthorized Request");
   });
+  await Redis.setSingleNote(updatedData.createdBy, updatedData._id, updatedData)
+  return updatedData
 };
 
 export const deleteNote = async (_id, email) => {
@@ -37,11 +45,16 @@ export const deleteNote = async (_id, email) => {
 export async function softDeleteNote(id) {
   const oldData = await Notes.findById(id);
   oldData.isTrashed = !oldData.isTrashed;
-  return Notes.findByIdAndUpdate(id, oldData, { new: true });
+  const updatedData = await Notes.findByIdAndUpdate(id, oldData, { new: true });
+  await Redis.setSingleNote(updatedData.createdBy, updatedData._id, updatedData)
+  console.log(await Redis.getAllNotesForUser(updatedData.createdBy));
+  return updatedData
 }
 
 export async function archiveNote(id) {
   const oldData = await Notes.findById(id);
   oldData.isArchive = !oldData.isArchive;
-  return Notes.findByIdAndUpdate(id, oldData, { new: true });
+  const updatedData = await Notes.findByIdAndUpdate(id, oldData, { new: true });
+  await Redis.setSingleNote(updatedData.createdBy, updatedData._id, updatedData)
+  return updatedData
 }

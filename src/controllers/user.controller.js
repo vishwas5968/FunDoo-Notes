@@ -3,6 +3,8 @@ import * as UserService from '../services/user.service';
 const bcrypt = require("bcryptjs");
 import { generateJwt } from '../utils/user.util.js';
 import logger from '../config/logger.js';
+import Notes from '../models/notes.model.js';
+import Redis from 'ioredis';
 
 export const registerUser = async (req, res, next) => {
   const data = await UserService.getUserByEmail(req.body.email);
@@ -27,6 +29,7 @@ export const registerUser = async (req, res, next) => {
 };
 
 export const login = async (req, res, next) => {
+  console.log('hello');
   try {
     const data = await UserService.login(req, res, next);
     if (data.isMatch) {
@@ -36,7 +39,7 @@ export const login = async (req, res, next) => {
         code: HttpStatus.OK,
         message: "Congratulations! Login Successful",
         data: {
-          data,
+          ...data,
           token: token
         }
       });
