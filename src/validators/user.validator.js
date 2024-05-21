@@ -9,9 +9,9 @@ export const newUserValidator = (req, res, next) => {
       .min(8)
       .required()
       .pattern(
-        new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$")
+        new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$')
       )
-      .message("")
+      .message('')
   });
 
   const { error, value } = schema.validate(req.body);
@@ -30,9 +30,9 @@ export const loginValidator = (req, res, next) => {
       .min(8)
       .required()
       .pattern(
-        new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$")
+        new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$')
       )
-      .message("")
+      .message('')
   });
   const { error, value } = schema.validate(req.body);
   if (error) {

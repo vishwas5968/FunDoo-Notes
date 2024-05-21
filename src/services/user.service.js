@@ -2,7 +2,7 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '../utils/user.util';
 import { getNotesById } from './notes.service.js';
-import  { setAllNotes } from '../utils/redis.js';
+import { setAllNotes } from '../utils/redis.js';
 
 //create new user
 export const registerUser = async (body) => {
@@ -15,8 +15,7 @@ export const getUserByEmail = (email) => {
 
 export const login = async (req) => {
   const data = await User.findOne({ email: req.body.email });
-  console.log(data);
-  await setAllNotes(data._id, await getNotesById(data._id))
+  await setAllNotes(data._id, await getNotesById(data._id));
   if (data) {
     const match = await bcrypt.compare(req.body.password, data.password);
     return {
@@ -41,5 +40,5 @@ export const resetPassword = async (email, password) => {
     data.password = await bcrypt.hash(password, 5);
     return User.findOneAndUpdate({ email: email }, data, { new: true });
   }
-  throw new Error("Unauthorized Request");
+  throw new Error('Unauthorized Request');
 };

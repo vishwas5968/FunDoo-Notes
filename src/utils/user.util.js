@@ -1,11 +1,11 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 import logger from '../config/logger.js';
 import HttpStatus from 'http-status-codes';
 dotenv.config();
-const Redis = require("ioredis");
+const Redis = require('ioredis');
 
 export function generateJwt(id, email) {
   const payload = {
@@ -24,11 +24,11 @@ export async function sendEmail(email) {
   Oauth_client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
   const accessToken = Oauth_client.getAccessToken();
   let transporter = nodemailer.createTransport({
-    service: "Gmail",
+    service: 'Gmail',
     port: 587,
     secure: false,
     auth: {
-      type: "OAuth2",
+      type: 'OAuth2',
       user: process.env.EMAIL,
       pass: process.env.PASSWORD,
       clientId: process.env.CLIENT_ID,
@@ -39,11 +39,11 @@ export async function sendEmail(email) {
     debug: true
   });
   let msg = {
-    from: "v14052000@gmail.com",
+    from: 'v14052000@gmail.com',
     to: `${email}`,
-    subject: "Hello",
-    text: "Hello World",
-    html: "<a href=http://localhost:3000/api/v1/users/\">Click here to register </a>"
+    subject: 'Hello',
+    text: 'Hello World',
+    html: '<a href=http://localhost:3000/api/v1/users/">Click here to register </a>'
   };
   transporter.sendMail(msg, (err, result) => {
     if (err) throw new Error(err);
@@ -69,9 +69,9 @@ export const enableCache = (email, userNotes) => {
 export const getDataFromCache = (req, res) => {
   const redis = new Redis();
   try {
-    let token = req.header("Authorization");
-    token = token.split(" ")[1];
-    const userInfo = jwt.verify(token, process.env["SECRET "]);
+    let token = req.header('Authorization');
+    token = token.split(' ')[1];
+    const userInfo = jwt.verify(token, process.env['SECRET ']);
     const data = redis.get(userInfo.email, (err, result) => {
       if (err) {
         return null;
@@ -81,7 +81,7 @@ export const getDataFromCache = (req, res) => {
     });
     res.status(HttpStatus.OK).json({
       success: true,
-      message: "fetched successfully",
+      message: 'fetched successfully',
       data: data
     });
   } catch (e) {
