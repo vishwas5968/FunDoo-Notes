@@ -1,26 +1,38 @@
 import HttpStatus from 'http-status-codes';
 import * as UserService from '../services/user.service';
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 import { generateJwt } from '../utils/user.util.js';
-import logger from '../config/logger.js';
-import Notes from '../models/notes.model.js';
-import Redis from 'ioredis';
+import { producerInit } from '../kafka/producer.js';
+import { consumerInit } from '../kafka/consumer.js';
 
 export const registerUser = async (req, res, next) => {
+  
+  // const info = await consumerInit()
+  
   const data = await UserService.getUserByEmail(req.body.email);
   req.body.password = await bcrypt.hash(req.body.password, 5);
   try {
     if (data.length === 0) {
       const data = await UserService.registerUser(req.body);
+      await producerInit(req)
+      // const info = await consumerInit()
+      consumerInit()
+    .then(data => {
+      console.log('Received data:', data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+      // console.log(info,'???????????????????');
       res.status(HttpStatus.CREATED).json({
         success: true,
-        message: "User created successfully",
+        message: 'User created successfully',
         data: data
       });
     } else {
       res.status(HttpStatus.BAD_REQUEST).json({
         code: HttpStatus.BAD_REQUEST,
-        message: "User with this email is already present"
+        message: 'User with this email is already present'
       });
     }
   } catch (error) {
@@ -29,15 +41,14 @@ export const registerUser = async (req, res, next) => {
 };
 
 export const login = async (req, res, next) => {
-  console.log('hello');
   try {
     const data = await UserService.login(req, res, next);
     if (data.isMatch) {
       const token = generateJwt(data.data._id, req.body.email);
-      res.cookie("at", token);
+      res.cookie('at', token);
       res.status(HttpStatus.OK).json({
         code: HttpStatus.OK,
-        message: "Congratulations! Login Successful",
+        message: 'Congratulations! Login Successful',
         data: {
           ...data,
           token: token
@@ -62,16 +73,16 @@ export const forgotPassword = async (req, res) => {
   try {
     const data = await UserService.forgotPassword(req.body.email);
     const token = generateJwt(null, req.body.email);
-    res.cookie("at", token);
+    res.cookie('at', token);
     res.status(200).json({
       success: true,
       message: `Click on the below link to reset password ${data}`,
-      data: "http://localhost:3000/api/v1/users/reset-password"
+      data: 'http://localhost:3000/api/v1/users/reset-password'
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: "Bad request",
+      message: 'Bad request',
       data: `${error}`
     });
   }
@@ -86,14 +97,14 @@ export const resetPassword = async (req, res) => {
     if (data !== null) {
       res.status(200).json({
         success: true,
-        message: "Password updated successfully",
+        message: 'Password updated successfully',
         data: `${data}`
       });
     }
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: "Bad request",
+      message: 'Bad request',
       data: `${error}`
     });
   }

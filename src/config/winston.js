@@ -1,9 +1,9 @@
-const { format, transports, level } = require("winston");
+const { format, transports, level } = require('winston');
 const winston = require('winston');
 const { combine, timestamp, printf } = format;
 
 export const logger = winston.createLogger({
-  level: "silly",
+  level: 'silly',
   format: combine(
     timestamp(),
     printf((info) => {

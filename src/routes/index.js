@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 
 import userRoute from './user.route';
-import notesRoute from "./notes.route.js";
+import notesRoute from './notes.route.js';
 
 const routes = () => {
   router.get('/', (req, res) => {

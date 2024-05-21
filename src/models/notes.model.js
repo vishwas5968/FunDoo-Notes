@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose';
 
 const notesSchema = new Schema({
   title: {
@@ -9,7 +9,7 @@ const notesSchema = new Schema({
   },
   color: {
     type: String,
-    default: "White"
+    default: 'White'
   },
   isArchive: {
     type: Boolean,
@@ -24,4 +24,4 @@ const notesSchema = new Schema({
   }
 });
 
-export default model("Notes", notesSchema);
+export default model('Notes', notesSchema);

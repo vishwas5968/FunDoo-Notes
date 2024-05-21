@@ -1,7 +1,8 @@
 import express from 'express';
 import * as userController from '../controllers/user.controller';
-import { loginValidator, newUserValidator } from "../validators/user.validator";
+import { loginValidator, newUserValidator } from '../validators/user.validator';
 import { userAuth } from '../middlewares/auth.middleware.js';
+import { producerInit } from '../kafka/producer.js';
 
 const router = express.Router();
 
